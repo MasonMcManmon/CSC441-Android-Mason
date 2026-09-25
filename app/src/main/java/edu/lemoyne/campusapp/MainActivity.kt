@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
 fun HomeScreen(modifier: Modifier = Modifier) {
     // --- Class 6 : Step 3 - a column so things stack ---
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(24.dp)
     ){
