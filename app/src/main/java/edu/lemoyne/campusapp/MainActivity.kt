@@ -88,7 +88,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             .padding(50.dp)
     ) {
         // --- Class 7 : Step 1 - A counter that remembers call ---
-        counterDemo()
+        //counterDemo()
 
         // --- Lab 6 : Task 3 ---
         Image(
