@@ -129,7 +129,14 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
             )
 
-        // --- Class 7 : Step 4 - The button chnages the state
+        // --- Lab 7 : Task 4 - A live character Counter ---
+        Text(
+            text = "${newMeeting.length} /40",
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        // --- Class 7 : Step 4 - The button changes the state
 
         Button(onClick = {
             meetings.add(newMeeting)
@@ -137,14 +144,31 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         }){
             Text("Add Meeting")
         }
+        // --- Lab 7 : Task 1 - Remove the last item ---
+        Button(onClick = {
+            if (meetings.isNotEmpty()){
+                meetings.removeAt(meetings.lastIndex)
+                //meetings.removeLast()
+            }
+        }){
+            Text("Remove Last")
+
+        }
+        // --- Lab 7 : Task 3 - Clear all ---
+        Button(onClick = {
+            meetings.clear()
+        }) {
+            Text("Clear all")
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         // --- class 7 : Draw what is in list ---
+        // --- Lab 7 : Task 2 - singular and plural
         Text(
-            text = "${meetings.size} Meetings",
+            text = if (meetings.size == 1) "1 Meeting" else "${meetings.size} Meetings",
             fontWeight = FontWeight.Bold,
-            fontSize = 10.sp
+            fontSize = 18.sp
         )
 
         for (meetings in meetings) {
