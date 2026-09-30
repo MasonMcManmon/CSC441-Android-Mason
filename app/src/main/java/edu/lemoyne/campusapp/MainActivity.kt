@@ -12,11 +12,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.innerShadow
 import androidx.compose.ui.layout.ContentScale
@@ -40,25 +47,58 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+// --- Class 7 : Step 1 : A counter that remembers ---
+@Composable
+fun counterDemo() {
+    var count by remember { mutableStateOf(value = 0) }
+
+    Button(
+        onClick = { count++ }
+    ) {
+        Text(text = "Tapped $count Times")
+
+    }
+}
+
+
 // --- Class 6 : Step one my own screen ---
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
+
+    // --- Class 7 : Step 2 - the list lives in state ---
+
+    var meetings = remember {
+        mutableStateListOf(
+            "Past Event: Introduction",
+            "Current Event: Website Building",
+            "Next Event: Raspberry pi",
+            "Future Event: NYC Trip"
+        )
+    }
+    // ---Class 7 : Step 3 - What's type lives in state
+
+    var newMeeting by remember { mutableStateOf( value = "" )}
+
     // --- Class 6 : Step 3 - a column so things stack ---
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(50.dp)
-    ){
+    ) {
+        // --- Class 7 : Step 1 - A counter that remembers call ---
+        counterDemo()
+
         // --- Lab 6 : Task 3 ---
         Image(
             painter = painterResource(id = R.drawable.newforandroidapp),
-                contentDescription = "A Logic gate",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp)
-            )
+            contentDescription = "A Logic gate",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp)
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -80,20 +120,45 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(text = "Best Member: Mason", fontSize = 18.sp)
-        Text(text = "Current Event: Website Building", fontSize = 18.sp)
-        Text(text = "Next Event: Raspberry pi", fontSize = 18.sp)
-        Text(text = "Future Event: NYC Trip", fontSize = 18.sp)
+
+        // --- Class 7 : Step 3 - The text Field ---
+        OutlinedTextField(
+            value = newMeeting,
+            onValueChange = { newMeeting = it },
+            label = { Text("Meeting Name")},
+            modifier = Modifier.fillMaxWidth()
+            )
+
+        // --- Class 7 : Step 4 - The button chnages the state
+
+        Button(onClick = {
+            meetings.add(newMeeting)
+            newMeeting = ""
+        }){
+            Text("Add Meeting")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // --- class 7 : Draw what is in list ---
+        Text(
+            text = "${meetings.size} Meetings",
+            fontWeight = FontWeight.Bold,
+            fontSize = 10.sp
+        )
+
+        for (meetings in meetings) {
+            Text(text = meetings, fontSize = 18.sp)
+        }
 
         // --- Lab 6 : Task 2 ---
-        Spacer(modifier = Modifier.height(350.dp))
+        Spacer(modifier = Modifier.height(250.dp))
 
         Text(
             text = "Last Event September 2026",
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-
 
 
     }
@@ -104,8 +169,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
 fun HomeScreenPreview() {
     CampusAppTheme() {
-            HomeScreen()
-        }
+        HomeScreen()
+    }
 }
 
 // --- Lab 6 : Task 4 ---
