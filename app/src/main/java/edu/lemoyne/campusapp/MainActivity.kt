@@ -176,7 +176,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         }
 
         // --- Lab 6 : Task 2 ---
-        Spacer(modifier = Modifier.height(250.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "Last Event September 2026",
