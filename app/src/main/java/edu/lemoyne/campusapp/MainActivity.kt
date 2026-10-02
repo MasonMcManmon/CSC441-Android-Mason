@@ -81,6 +81,9 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
     var newMeeting by remember { mutableStateOf( value = "" )}
 
+    // --- Class 8 : Step 2 - the error message lives in status too ---
+    var error by remember { mutableStateOf<String?> (value = null)}
+
     // --- Class 6 : Step 3 - a column so things stack ---
     Column(
         modifier = modifier
@@ -124,26 +127,56 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         // --- Class 7 : Step 3 - The text Field ---
         OutlinedTextField(
             value = newMeeting,
-            onValueChange = { newMeeting = it },
+            // ---Class 8 : Step 3 - the field itself pushes back ---
+            onValueChange = {
+                newMeeting = it.take(n = MAX_NAME_LENGTH)
+                error = null
+
+                            },
             label = { Text("Meeting Name")},
+            singleLine = true,
+            isError = error != null,
             modifier = Modifier.fillMaxWidth()
             )
 
+        error?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 14.sp
+            )
+        }
+
         // --- Lab 7 : Task 4 - A live character Counter ---
         Text(
-            text = "${newMeeting.length} /40",
+            text = "${newMeeting.length} /$MAX_NAME_LENGTH",
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        // --- Class 7 : Step 4 - The button changes the state
+
+
+        // --- Class 7 : Step 4 - The button changes the state ---
 
         Button(onClick = {
-            meetings.add(newMeeting)
-            newMeeting = ""
-        }){
+            // --- Class 8: Step 3 - Check before you add ---
+            val problem = validateMeetingName(input = newMeeting, existingMeetings = meetings)
+            if (problem == null) {
+                meetings.add(newMeeting)
+                newMeeting = ""
+            } else {
+                error = problem
+            }
+
+        },
+        // --- Class 8 : Step 4 : The sign on the door, not the lock ---
+            enabled = newMeeting.isNotBlank()
+
+        ){
             Text("Add Meeting")
         }
+
+
         // --- Lab 7 : Task 1 - Remove the last item ---
         Button(onClick = {
             if (meetings.isNotEmpty()){
@@ -185,6 +218,19 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         )
 
 
+    }
+}
+
+const val MAX_NAME_LENGTH = 40
+
+// --- Class 8 : Step 1 - 1 rule book for meeting names ---
+fun validateMeetingName (input: String, existingMeetings: List<String>): String? {
+    val meetingName = input.trim()
+    return when {
+        meetingName.isEmpty() -> "Enter a Meeting Name: "
+        meetingName.length > MAX_NAME_LENGTH -> "Keep it to $MAX_NAME_LENGTH Characters or fewer"
+        existingMeetings.any { it.equals(other = meetingName, ignoreCase = true)} -> "$meetingName is already on the List"
+        else -> null
     }
 }
 
