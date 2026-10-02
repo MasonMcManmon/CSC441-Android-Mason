@@ -228,6 +228,10 @@ fun validateMeetingName (input: String, existingMeetings: List<String>): String?
     val meetingName = input.trim()
     return when {
         meetingName.isEmpty() -> "Enter a Meeting Name: "
+        // --- Lab 8 : Task 1 - minimum length ---
+        meetingName.length < 3 -> "Too Short - at Least 3 characters"
+        // --- Lab 8 : Task 2 - My own rule ---
+        meetingName.all {it.isDigit()} -> "A meeting name can't be only numbers"
         meetingName.length > MAX_NAME_LENGTH -> "Keep it to $MAX_NAME_LENGTH Characters or fewer"
         existingMeetings.any { it.equals(other = meetingName, ignoreCase = true)} -> "$meetingName is already on the List"
         else -> null
