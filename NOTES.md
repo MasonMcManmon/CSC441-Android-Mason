@@ -27,4 +27,20 @@ it only counted up one without adding anything new.
 3. What does remember do? What would happen without it?
 Remembers keeps the same box every time the function is run, without it every time it would return with default
 
+--- Lab 8 : Task 1 ---
+Putting task one before empty doesn't change anything sense we have grayed out the button when its empty.
+
+--- Lab 8 : Task 2 ---
+Because there will be no event that's purely numbers.
+
+--- Lab 8 : Task 3 ---
+1. I Left empty                   ->  Button is grayed out                                  -> Yes
+2. I added 18 spaces              ->  It did not recognize them and the button stayed gray  -> Yes
+3. I added 40 characters          ->  It did not let me add more                            -> Yes
+4. I added one character          ->  It sent the too short error                           -> Yes
+5. I added Hello then tried hello ->  It recognized that it was already in there            -> Yes
+6. I put 123456789                ->  It sent the error "cant only be numbers"              -> Yes
+7. I put 123456789W               ->  It added it as a meeting name                         -> Yes
+8. I put New York Trip            ->  It added it as a meeting name                         -> Yes 
+
 
