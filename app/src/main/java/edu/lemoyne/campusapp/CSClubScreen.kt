@@ -67,13 +67,21 @@ fun CampusAppScreen (modifier: Modifier = Modifier) {
             meetings = meetings,
             onAddMeetings = { meetings.add(it) },
             onSeeAll = { currentScreen = "list" },
+            // --- Lab 9 - Task 2 : Part 3 ---
+            onAbout = { currentScreen = "about"},
+
             modifier = modifier
         )
 
         "list" -> listScreen(
             meetings = meetings,
-            onAddMeetings = { currentScreen = "home" },
-            modifier = Modifier
+            onBack = { currentScreen = "home" },
+            modifier = modifier
+        )
+        // --- Lab 9 - Task 2 : Part 1 ---
+        "about" -> AboutScreen(
+            onBack = { currentScreen = "home"},
+            modifier = modifier
         )
     }
 
@@ -86,6 +94,8 @@ fun HomeScreen(
     meetings: MutableList<String>,
     onAddMeetings: (String) -> Unit,
     onSeeAll: () -> Unit,
+    // --- Lab 9 - Task 2 : Part 2 ---
+    onAbout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -193,17 +203,16 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // --- class 7 : Draw what is in list ---
-        // --- Lab 7 : Task 2 - singular and plural
-        Text(
-            text = if (meetings.size == 1) "1 Meeting" else "${meetings.size} Meetings",
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
-        )
+
         // ---Class 9 : Step 5 - Button to other screen ---
         Button(onClick = onSeeAll) {
             Text(text = "See All Meetings")
 
+        }
+
+        // --- Lab 9 - Task 2 : Part 4 ---
+        Button(onClick = onAbout) {
+            Text(text = "About")
         }
 
         // --- Lab 6 : Task 2 ---
@@ -223,18 +232,18 @@ fun HomeScreen(
 @Composable
 fun listScreen (
     meetings: List<String>,
-    onAddMeetings: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     // --- Class 9 : Step 6 - No Phone ---
-    BackHandler { onAddMeetings() }
+    BackHandler { onBack() }
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(24.dp)
     ) {
-        TextButton(onClick = onAddMeetings) {
+        TextButton(onClick = onBack) {
             Text(text = "Back")
         }
 
@@ -243,6 +252,13 @@ fun listScreen (
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold
         )
+// --- Lab 9 - Task 1 : Count on the list screen ---
+        Text(
+            text = if (meetings.size == 1) "1 Meeting" else "${meetings.size} Meetings",
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        )
+
         Spacer(modifier = Modifier.height(16.dp))
 
         for (meetings in meetings) {
@@ -253,6 +269,43 @@ fun listScreen (
             )
         }
     }
+}
+
+// --- Lab 9 - Task 2 : a third screen ---
+@Composable
+fun AboutScreen(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    BackHandler { onBack() }
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(24.dp)
+    ) {
+        TextButton (onClick = onBack) {
+            Text("Back")
+        }
+        Text(
+            text = "About",
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "A Meeting Log for the Computer Science Club",
+            fontSize = 24.sp
+        )
+        Text(
+            text = "Built for CSC 441 by Mason M.",
+            fontSize = 24.sp
+        )
+
+    }
+
 }
 
 const val MAX_NAME_LENGTH = 40
@@ -280,7 +333,9 @@ fun HomeScreenPreview() {
         HomeScreen(
             meetings = mutableListOf("Past Event: Introduction", "Current Event: Website Building", "Next Event: Raspberry pi", "Future Event: NYC Trip"),
             onAddMeetings = {},
-            onSeeAll = {}
+            onSeeAll = {},
+            // --- Lab 9 - Task 2 : Part 5 ---
+            onAbout = {}
 
         )
     }
@@ -296,7 +351,7 @@ fun HomeScreenDarkPreview() {
         Surface {
             listScreen(
                 meetings = mutableListOf("Past Event: Introduction", "Current Event: Website Building", "Next Event: Raspberry pi", "Future Event: NYC Trip"),
-                onAddMeetings = {}
+                onBack = {}
             )
         }
     }
