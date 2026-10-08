@@ -44,3 +44,16 @@ Because there will be no event that's purely numbers.
 8. I put New York Trip            ->  It added it as a meeting name                         -> Yes 
 
 
+--- Lab 9 : Task 3 ---
+1. After rotating, which screen were you on? 
+    I am still on the all meetings screen.
+
+2. Were your two new items still there? 
+    No the 2 items i added were lost/ not remembered.
+
+3. Look at how currentScreen and trails(Meetings) are each created in CampusAppScreen. Explain the difference in one or
+two sentences
+    CurrentScreen is created with rememberSaveable while Meetings is created with only remember. rememberSavable
+    allows configuration change like the screen rotation while remember does not.
+
+
