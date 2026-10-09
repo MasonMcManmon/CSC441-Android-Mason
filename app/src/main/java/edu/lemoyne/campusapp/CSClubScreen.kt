@@ -4,12 +4,19 @@ import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -22,6 +29,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -58,9 +67,14 @@ fun CampusAppScreen (modifier: Modifier = Modifier) {
             "Future Event: NYC Trip"
         )
     }
+//    // --- Class 10 : Step 1 - See The Problem ---
+//    val meetings = remember {
+//        (1..60).map { "Test meetings $it" }.toMutableStateList()
+//    }
+
     // --- CLass 9 - Step 4 - which screen is showing ---
 
-    var currentScreen by rememberSaveable {mutableStateOf( value = "home")}
+    var currentScreen by rememberSaveable { mutableStateOf(value = "home") }
 
     when (currentScreen) {
         "home" -> HomeScreen(
@@ -68,7 +82,7 @@ fun CampusAppScreen (modifier: Modifier = Modifier) {
             onAddMeetings = { meetings.add(it) },
             onSeeAll = { currentScreen = "list" },
             // --- Lab 9 - Task 2 : Part 3 ---
-            onAbout = { currentScreen = "about"},
+            onAbout = { currentScreen = "about" },
 
             modifier = modifier
         )
@@ -76,17 +90,17 @@ fun CampusAppScreen (modifier: Modifier = Modifier) {
         "list" -> listScreen(
             meetings = meetings,
             onBack = { currentScreen = "home" },
+            // --- Class 10 : Step 4 - only the owner changes the list ---
+            onRemove = { meetings.remove(it) },
             modifier = modifier
         )
         // --- Lab 9 - Task 2 : Part 1 ---
         "about" -> AboutScreen(
-            onBack = { currentScreen = "home"},
+            onBack = { currentScreen = "home" },
             modifier = modifier
         )
     }
-
 }
-
 
 // --- Class 6 : Step one my own screen ---
 @Composable
@@ -202,6 +216,11 @@ fun HomeScreen(
 
 
         Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = if (meetings.size == 1) "1 Meeting" else "${meetings.size} Meetings",
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        )
 
 
         // ---Class 9 : Step 5 - Button to other screen ---
@@ -233,15 +252,24 @@ fun HomeScreen(
 fun listScreen (
     meetings: List<String>,
     onBack: () -> Unit,
+    onRemove: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+//    // --- Class 10 : Step 4 - passes the request up ---
+//    items(meetings) { meeting ->
+//        MeetingRow(
+//            name = meeting,
+//            onRemove = { onRemove(meeting) }
+//        )
+//    }
+
     // --- Class 9 : Step 6 - No Phone ---
     BackHandler { onBack() }
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(24.dp)
+            .fillMaxSize()
+            .padding(horizontal = 24.dp)
     ) {
         TextButton(onClick = onBack) {
             Text(text = "Back")
@@ -261,11 +289,53 @@ fun listScreen (
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        for (meetings in meetings) {
+        // --- Class 10 : Step 5 - the empty case ---
+        if (meetings.isEmpty()) {
             Text(
-                text = meetings,
+                text = "No meetings yet. Add one on the Home Screen.",
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        } else {
+
+
+
+        // --- Class 10 : Step 2 - A list that Scrolls ---
+
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(meetings) { meeting ->
+                MeetingRow(
+                    name = meeting,
+                    onRemove = { onRemove(meeting) }
+                )
+
+            }
+           }
+        }
+
+        }
+    }
+// --- Class 10 : Step 3 - One row, as its own Composable --
+@Composable
+fun MeetingRow (
+    name: String,
+    onRemove: () -> Unit
+) {
+    // --- Class 10 : Step 4 - a remove every button on every row --
+    TextButton (onRemove) {
+        Text("Remove")
+    }
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = name,
                 fontSize = 18.sp,
-                modifier = Modifier.padding(vertical = 6.dp)
+                modifier = Modifier.weight(1f)
             )
         }
     }
@@ -350,9 +420,30 @@ fun HomeScreenDarkPreview() {
     CampusAppTheme() {
         Surface {
             listScreen(
-                meetings = mutableListOf("Past Event: Introduction", "Current Event: Website Building", "Next Event: Raspberry pi", "Future Event: NYC Trip"),
-                onBack = {}
+                meetings = mutableListOf(
+                    "Past Event: Introduction",
+                    "Current Event: Website Building",
+                    "Next Event: Raspberry pi",
+                    "Future Event: NYC Trip"
+                ),
+                onBack = {},
+                onRemove = {}
             )
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+    fun ListScreenEmptyPreview() {
+        CampusAppTheme {
+            Surface {
+                listScreen(
+                    meetings = emptyList(),
+                    onBack = {},
+                    onRemove = {}
+                )
+            }
+        }
+    }
+
