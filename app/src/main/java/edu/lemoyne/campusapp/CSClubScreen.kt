@@ -463,3 +463,15 @@ fun HomeScreenDarkPreview() {
         }
     }
 
+@Preview(showBackground = true)
+@Composable
+fun AboutScreenEmptyPreview() {
+    CampusAppTheme {
+        Surface {
+            AboutScreen(
+                onBack = {}
+            )
+        }
+    }
+}
+
