@@ -92,6 +92,7 @@ fun CampusAppScreen (modifier: Modifier = Modifier) {
             onBack = { currentScreen = "home" },
             // --- Class 10 : Step 4 - only the owner changes the list ---
             onRemove = { meetings.remove(it) },
+            onRemoveAll = { meetings.clear() },
             modifier = modifier
         )
         // --- Lab 9 - Task 2 : Part 1 ---
@@ -253,6 +254,7 @@ fun listScreen (
     meetings: List<String>,
     onBack: () -> Unit,
     onRemove: (String) -> Unit,
+    onRemoveAll: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 //    // --- Class 10 : Step 4 - passes the request up ---
@@ -287,6 +289,13 @@ fun listScreen (
             fontSize = 18.sp
         )
 
+        // --- Lab 10 : Task 2 - remove all, through the owner ---
+        if (meetings.isNotEmpty()) {
+            TextButton(onClick = onRemoveAll) {
+                Text ("Remove all")
+            }
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         // --- Class 10 : Step 5 - the empty case ---
@@ -294,7 +303,12 @@ fun listScreen (
             Text(
                 text = "No meetings yet. Add one on the Home Screen.",
                 color = MaterialTheme.colorScheme.onSurfaceVariant
+
             )
+            // --- Lab 10 : Step 1 - a way out of the empty screen ---
+            TextButton(onClick = onBack) {
+                Text(text = "Home Screen")
+            }
         } else {
 
 
@@ -427,7 +441,8 @@ fun HomeScreenDarkPreview() {
                     "Future Event: NYC Trip"
                 ),
                 onBack = {},
-                onRemove = {}
+                onRemove = {},
+                onRemoveAll = {}
             )
         }
     }
@@ -441,7 +456,8 @@ fun HomeScreenDarkPreview() {
                 listScreen(
                     meetings = emptyList(),
                     onBack = {},
-                    onRemove = {}
+                    onRemove = {},
+                    onRemoveAll = {}
                 )
             }
         }
