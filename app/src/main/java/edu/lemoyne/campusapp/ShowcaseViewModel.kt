@@ -13,7 +13,7 @@ sealed class ShowcaseUiState {
 }
 
 class ShowcaseViewModel: ViewModel() {
-    private val respository = ShowcaseRespository()
+    private val repository = ShowcaseRespository()
 
     private val _uiState = MutableStateFlow<ShowcaseUiState>(ShowcaseUiState.Loading)
     val uiState: StateFlow<ShowcaseUiState> = _uiState
@@ -22,7 +22,7 @@ class ShowcaseViewModel: ViewModel() {
         viewModelScope.launch {
             _uiState.value = ShowcaseUiState.Loading
             try {
-                val items = respository.loadItems()
+                val items = repository.loadItems()
                 _uiState.value = ShowcaseUiState.Success(items)
 
             } catch (error: Exception) {

@@ -56,4 +56,20 @@ two sentences
     CurrentScreen is created with rememberSaveable while Meetings is created with only remember. rememberSavable
     allows configuration change like the screen rotation while remember does not.
 
+Week 13, Wednesday: Lab 21
+1. What triggers refresh() when InterestsScreen first opens?
+MainActivity calls showcaseViewModel.refresh() when the app starts.
+
+2. What triggers refresh() when the button is tapped?
+The button it's self calls refresh which runs the function showcaseViewModel.refresh()
+
+3. Why does InterestsScreen receive onRefresh instead of the ViewModel?
+InterestsScreen doesn't know about viewmodel because it's done on another file.
+
+4. What is the difference between a successful [] response and a network failure?
+an [] means no data was found while a network failure means it could not connect to the data.
+
+5. How did you prove Android and the website use the same Supabase data?
+I had them both open and running and when I changed data in supabase it changed the same for both.
+
 
