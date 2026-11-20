@@ -56,7 +56,7 @@ fun counterDemo() {
 // --- Class 9 : Step 2 - One owenr for the data ---
 
 @Composable
-fun CampusAppScreen (modifier: Modifier = Modifier) {
+fun CampusAppScreen (showcaseState: ShowcaseUiState, onRefresh: () -> Unit, modifier: Modifier = Modifier) {
     // --- Class 7 : Step 2 - the list lives in state ---
 
     var meetings = remember {
@@ -83,6 +83,7 @@ fun CampusAppScreen (modifier: Modifier = Modifier) {
             onSeeAll = { currentScreen = "list" },
             // --- Lab 9 - Task 2 : Part 3 ---
             onAbout = { currentScreen = "about" },
+            onInterestsClick = { currentScreen = "interests" },
 
             modifier = modifier
         )
@@ -100,6 +101,13 @@ fun CampusAppScreen (modifier: Modifier = Modifier) {
             onBack = { currentScreen = "home" },
             modifier = modifier
         )
+
+        "interests" -> InterestsScreen(
+            state = showcaseState,
+            onBack = { currentScreen = "home" },
+            onRefresh = onRefresh,
+            modifier = modifier
+        )
     }
 }
 
@@ -111,7 +119,8 @@ fun HomeScreen(
     onSeeAll: () -> Unit,
     // --- Lab 9 - Task 2 : Part 2 ---
     onAbout: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onInterestsClick: () -> Unit = {}
 ) {
 
 
@@ -233,6 +242,10 @@ fun HomeScreen(
         // --- Lab 9 - Task 2 : Part 4 ---
         Button(onClick = onAbout) {
             Text(text = "About")
+        }
+
+        Button(onClick = onInterestsClick) {
+            Text("My Interests")
         }
 
         // --- Lab 6 : Task 2 ---
