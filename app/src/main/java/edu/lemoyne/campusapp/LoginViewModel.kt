@@ -11,10 +11,10 @@ data class LoginUiState (
     val failed: Boolean = false
 )
 
-class LoginVieModel: ViewModel() {
+class LoginViewModel: ViewModel() {
     private val repository = ShowcaseRespository()
     private val _state = MutableStateFlow(LoginUiState())
-    val status: StateFlow<LoginUiState> = _state
+    val state: StateFlow<LoginUiState> = _state
 
     fun login(email: String, password: String, onSuccess: (String) -> Unit) {
         viewModelScope.launch {
@@ -25,7 +25,7 @@ class LoginVieModel: ViewModel() {
                 onSuccess(token)
 
             } catch (error: Exception) {
-
+                _state.value = LoginUiState(failed = true)
             }
         }
     }

@@ -20,7 +20,7 @@ class ShowcaseViewModel: ViewModel() {
 
     private var accessToken: String? = null
 
-    fun setAcessToken(token: String) {
+    fun setAccessToken(token: String) {
         accessToken = token
     }
 

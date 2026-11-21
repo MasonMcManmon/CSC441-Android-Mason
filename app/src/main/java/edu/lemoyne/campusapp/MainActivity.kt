@@ -35,20 +35,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.lemoyne.campusapp.ui.theme.CampusAppTheme
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlin.getValue
 
 class MainActivity : ComponentActivity() {
 
     private val showcaseViewModel: ShowcaseViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        showcaseViewModel.refresh()
 
         enableEdgeToEdge()
 
         setContent {
 
+            val loginState by loginViewModel.state.collectAsStateWithLifecycle()
             val showcaseState by showcaseViewModel.uiState.collectAsStateWithLifecycle()
             showcaseViewModel
 
@@ -56,9 +58,16 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     CampusAppScreen(
                         showcaseState = showcaseState,
-                        onRefresh = { showcaseViewModel.refresh() },
-                        modifier = Modifier.padding(paddingValues = innerPadding)
-                    )
+                        loginState = loginState,
+                        onRefreshShowcase = showcaseViewModel::refresh,
+                        onLogin = { email, password, navigate ->
+                            loginViewModel.login(email, password) { token ->
+                                showcaseViewModel.setAccessToken(token)
+                                showcaseViewModel.refresh()
+                                navigate()
+                            }
+                        },
+                        modifier = Modifier.padding(innerPadding))
                 }
             }
         }

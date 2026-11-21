@@ -22,10 +22,6 @@ fun InterestsScreen(
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-//    Lab 21 : Task 1 - Load when the screen opens
-    LaunchedEffect(Unit) {
-        onRefresh()
-    }
 
     BackHandler { onBack() }
     Column(
