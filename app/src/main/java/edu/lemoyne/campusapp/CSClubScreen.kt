@@ -56,7 +56,13 @@ fun counterDemo() {
 // --- Class 9 : Step 2 - One owenr for the data ---
 
 @Composable
-fun CampusAppScreen (showcaseState: ShowcaseUiState, onRefresh: () -> Unit, modifier: Modifier = Modifier) {
+fun CampusAppScreen(
+    loginState: LoginUiState,
+    onRefreshShowcase: () -> Unit,
+    onLogin: (String, String, () -> Unit) -> Unit,
+    showcaseState: ShowcaseUiState,
+    modifier: Modifier = Modifier
+) {
     // --- Class 7 : Step 2 - the list lives in state ---
 
     var meetings = remember {
@@ -83,7 +89,7 @@ fun CampusAppScreen (showcaseState: ShowcaseUiState, onRefresh: () -> Unit, modi
             onSeeAll = { currentScreen = "list" },
             // --- Lab 9 - Task 2 : Part 3 ---
             onAbout = { currentScreen = "about" },
-            onInterestsClick = { currentScreen = "interests" },
+            onInterestsClick = { currentScreen = "login" },
 
             modifier = modifier
         )
@@ -102,10 +108,18 @@ fun CampusAppScreen (showcaseState: ShowcaseUiState, onRefresh: () -> Unit, modi
             modifier = modifier
         )
 
+        "login" -> LoginScreen(
+            state = loginState,
+            onLogin = { email, password ->
+                onLogin(email, password) { currentScreen = "interests" }
+            },
+            modifier = modifier
+        )
+
         "interests" -> InterestsScreen(
             state = showcaseState,
+            onRefresh = onRefreshShowcase,
             onBack = { currentScreen = "home" },
-            onRefresh = onRefresh,
             modifier = modifier
         )
     }
@@ -126,10 +140,10 @@ fun HomeScreen(
 
     // ---Class 7 : Step 3 - What's type lives in state
 
-    var newMeeting by remember { mutableStateOf( "" )}
+    var newMeeting by remember { mutableStateOf("") }
 
     // --- Class 8 : Step 2 - the error message lives in status too ---
-    var error by remember { mutableStateOf<String?> (value = null)}
+    var error by remember { mutableStateOf<String?>(value = null) }
 
     // --- Class 6 : Step 3 - a column so things stack ---
     Column(
@@ -180,7 +194,7 @@ fun HomeScreen(
                 error = null
 
             },
-            label = { Text("Meeting Name")},
+            label = { Text("Meeting Name") },
             singleLine = true,
             isError = error != null,
             modifier = Modifier.fillMaxWidth()
@@ -202,25 +216,25 @@ fun HomeScreen(
         )
 
 
-
         // --- Class 7 : Step 4 - The button changes the state ---
 
-        Button(onClick = {
-            // --- Class 8: Step 3 - Check before you add ---
-            val problem = validateMeetingName(input = newMeeting, existingMeetings = meetings)
-            if (problem == null) {
-                // --- Class 9 : Step 2 - ask the owner to add it ---
-                onAddMeetings(newMeeting.trim())
-                newMeeting = ""
-            } else {
-                error = problem
-            }
+        Button(
+            onClick = {
+                // --- Class 8: Step 3 - Check before you add ---
+                val problem = validateMeetingName(input = newMeeting, existingMeetings = meetings)
+                if (problem == null) {
+                    // --- Class 9 : Step 2 - ask the owner to add it ---
+                    onAddMeetings(newMeeting.trim())
+                    newMeeting = ""
+                } else {
+                    error = problem
+                }
 
-        },
+            },
             // --- Class 8 : Step 4 : The sign on the door, not the lock ---
             enabled = newMeeting.isNotBlank()
 
-        ){
+        ) {
             Text("Add Meeting")
         }
 
@@ -263,7 +277,7 @@ fun HomeScreen(
 
 // --- Class 9 : Step 3 - Second screen ---
 @Composable
-fun listScreen (
+fun listScreen(
     meetings: List<String>,
     onBack: () -> Unit,
     onRemove: (String) -> Unit,
@@ -305,7 +319,7 @@ fun listScreen (
         // --- Lab 10 : Task 2 - remove all, through the owner ---
         if (meetings.isNotEmpty()) {
             TextButton(onClick = onRemoveAll) {
-                Text ("Remove all")
+                Text("Remove all")
             }
         }
 
@@ -325,32 +339,32 @@ fun listScreen (
         } else {
 
 
+            // --- Class 10 : Step 2 - A list that Scrolls ---
 
-        // --- Class 10 : Step 2 - A list that Scrolls ---
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(meetings) { meeting ->
+                    MeetingRow(
+                        name = meeting,
+                        onRemove = { onRemove(meeting) }
+                    )
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(meetings) { meeting ->
-                MeetingRow(
-                    name = meeting,
-                    onRemove = { onRemove(meeting) }
-                )
-
+                }
             }
-           }
         }
 
-        }
     }
+}
+
 // --- Class 10 : Step 3 - One row, as its own Composable --
 @Composable
-fun MeetingRow (
+fun MeetingRow(
     name: String,
     onRemove: () -> Unit
 ) {
     // --- Class 10 : Step 4 - a remove every button on every row --
-    TextButton (onRemove) {
+    TextButton(onRemove) {
         Text("Remove")
     }
 
@@ -381,7 +395,7 @@ fun AboutScreen(
             .fillMaxWidth()
             .padding(24.dp)
     ) {
-        TextButton (onClick = onBack) {
+        TextButton(onClick = onBack) {
             Text("Back")
         }
         Text(
@@ -408,16 +422,22 @@ fun AboutScreen(
 const val MAX_NAME_LENGTH = 40
 
 // --- Class 8 : Step 1 - 1 rule book for meeting names ---
-fun validateMeetingName (input: String, existingMeetings: List<String>): String? {
+fun validateMeetingName(input: String, existingMeetings: List<String>): String? {
     val meetingName = input.trim()
     return when {
         meetingName.isEmpty() -> "Enter a Meeting Name: "
         // --- Lab 8 : Task 1 - minimum length ---
         meetingName.length < 3 -> "Too Short - at Least 3 characters"
         // --- Lab 8 : Task 2 - My own rule ---
-        meetingName.all {it.isDigit()} -> "A meeting name can't be only numbers"
+        meetingName.all { it.isDigit() } -> "A meeting name can't be only numbers"
         meetingName.length > MAX_NAME_LENGTH -> "Keep it to $MAX_NAME_LENGTH Characters or fewer"
-        existingMeetings.any { it.equals(other = meetingName, ignoreCase = true)} -> "$meetingName is already on the List"
+        existingMeetings.any {
+            it.equals(
+                other = meetingName,
+                ignoreCase = true
+            )
+        } -> "$meetingName is already on the List"
+
         else -> null
     }
 }
@@ -428,7 +448,12 @@ fun validateMeetingName (input: String, existingMeetings: List<String>): String?
 fun HomeScreenPreview() {
     CampusAppTheme() {
         HomeScreen(
-            meetings = mutableListOf("Past Event: Introduction", "Current Event: Website Building", "Next Event: Raspberry pi", "Future Event: NYC Trip"),
+            meetings = mutableListOf(
+                "Past Event: Introduction",
+                "Current Event: Website Building",
+                "Next Event: Raspberry pi",
+                "Future Event: NYC Trip"
+            ),
             onAddMeetings = {},
             onSeeAll = {},
             // --- Lab 9 - Task 2 : Part 5 ---
@@ -463,18 +488,18 @@ fun HomeScreenDarkPreview() {
 
 @Preview(showBackground = true)
 @Composable
-    fun ListScreenEmptyPreview() {
-        CampusAppTheme {
-            Surface {
-                listScreen(
-                    meetings = emptyList(),
-                    onBack = {},
-                    onRemove = {},
-                    onRemoveAll = {}
-                )
-            }
+fun ListScreenEmptyPreview() {
+    CampusAppTheme {
+        Surface {
+            listScreen(
+                meetings = emptyList(),
+                onBack = {},
+                onRemove = {},
+                onRemoveAll = {}
+            )
         }
     }
+}
 
 @Preview(showBackground = true)
 @Composable
